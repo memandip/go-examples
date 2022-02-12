@@ -25,11 +25,11 @@ func GenerateSelectQuery(selection []string, tableName string, conditions map[st
 
 	first := true
 	for k, v := range conditions {
-		if first != true {
+		if !first {
 			whereClause += " AND "
 		}
-		whereClause += fmt.Sprintf(" %v='%v' ", k, v)
-		if first == true {
+		whereClause += fmt.Sprintf("%v='%v'", k, v)
+		if first {
 			first = false
 		}
 	}
