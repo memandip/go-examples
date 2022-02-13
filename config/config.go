@@ -18,17 +18,25 @@ func loadEnv() error {
 	return err
 }
 
-func Dbpool() (*sql.DB, error) {
+func Dbpool(dbCreds mysql.DatabaseCredentials) (*sql.DB, error) {
 	err := loadEnv()
 	if err != nil {
 		log.Fatal(err)
 	}
-	pool, err := mysql.Connect(mysql.DatabaseCredentials{
-		os.Getenv("DB_USERNAME"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_DATABASE"),
-		os.Getenv("DB_HOST"),
-	})
+
+	var pool *sql.DB
+
+	if dbCreds != (mysql.DatabaseCredentials{}) {
+		pool, err = mysql.Connect(dbCreds)
+	} else {
+		pool, err = mysql.Connect(mysql.DatabaseCredentials{
+			os.Getenv("DB_USERNAME"),
+			os.Getenv("DB_PASSWORD"),
+			os.Getenv("DB_DATABASE"),
+			os.Getenv("DB_HOST"),
+		})
+
+	}
 
 	return pool, err
 }
