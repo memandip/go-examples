@@ -39,18 +39,23 @@ func (etl *Etl) validateEtl() error {
 	return nil
 }
 
-func push(dataChannel chan<- map[string]interface{}, dbPool *sql.DB, query string) {
+func push(dataChannel chan<- map[string]interface{}, dbPool *sql.DB, etl Etl, query string) {
 	rows, _ := mysql.Run(dbPool, query)
 
 	for rows.Next() {
-		var id int64
-		var name, email string
-		rows.Scan(&id, &name, &email)
-		result := map[string]interface{}{
-			"id":    id,
-			"name":  name,
-			"email": email,
+		values := make([]interface{}, len(etl.CurrentSchema.Columns))
+		vaulePtrs := make([]interface{}, len(etl.CurrentSchema.Columns))
+		for i, _ := range values {
+			vaulePtrs[i] = &values[i]
 		}
+
+		rows.Scan(vaulePtrs...)
+
+		result := make(map[string]interface{}, len(etl.CurrentSchema.Columns))
+		for i, k := range etl.CurrentSchema.Columns {
+			result[k] = string(values[i].([]byte))
+		}
+
 		dataChannel <- result
 	}
 
@@ -118,7 +123,7 @@ func EtlMysql(etlDbCreds EtlDbCreds, etl Etl) {
 
 	dataChannel := make(chan map[string]interface{})
 	done := make(chan bool)
-	go push(dataChannel, currentDbPool, query)
+	go push(dataChannel, currentDbPool, etl, query)
 	go write(dataChannel, targetDbPool, etl, done)
 	<-done
 
