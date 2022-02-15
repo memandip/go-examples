@@ -3,8 +3,9 @@ package config
 import (
 	"database/sql"
 	"log"
-	"mandip/go-examples/mysql"
 	"os"
+
+	"github.com/memandip/go-examples/mysql"
 
 	"github.com/joho/godotenv"
 )
