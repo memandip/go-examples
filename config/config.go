@@ -3,8 +3,9 @@ package config
 import (
 	"database/sql"
 	"log"
-	"mandip/go-examples/mysql"
 	"os"
+
+	"github.com/memandip/go-examples/mysql"
 
 	"github.com/joho/godotenv"
 )
@@ -18,17 +19,33 @@ func loadEnv() error {
 	return err
 }
 
-func Dbpool() (*sql.DB, error) {
+func GetDBCredentials() mysql.DatabaseCredentials {
 	err := loadEnv()
 	if err != nil {
 		log.Fatal(err)
 	}
-	pool, err := mysql.Connect(mysql.DatabaseCredentials{
+
+	return mysql.DatabaseCredentials{
 		os.Getenv("DB_USERNAME"),
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_DATABASE"),
 		os.Getenv("DB_HOST"),
-	})
+	}
+}
+
+func Dbpool(dbCreds mysql.DatabaseCredentials) (*sql.DB, error) {
+	err := loadEnv()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var pool *sql.DB
+
+	if dbCreds != (mysql.DatabaseCredentials{}) {
+		pool, err = mysql.Connect(dbCreds)
+	} else {
+		pool, err = mysql.Connect(GetDBCredentials())
+	}
 
 	return pool, err
 }

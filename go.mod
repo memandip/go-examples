@@ -1,4 +1,4 @@
-module mandip/go-examples
+module github.com/memandip/go-examples
 
 go 1.17
 

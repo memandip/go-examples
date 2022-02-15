@@ -16,7 +16,6 @@ type DatabaseCredentials struct {
 
 func Connect(credentials DatabaseCredentials) (*sql.DB, error) {
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", credentials.Username, credentials.Password, credentials.Host, credentials.Database))
-
 	return db, err
 }
 

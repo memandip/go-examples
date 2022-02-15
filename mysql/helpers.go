@@ -6,13 +6,12 @@ func GenerateSelectQuery(selection []string, tableName string, conditions map[st
 	selectFields := ""
 	whereClause := ""
 
+	isLast := false
 	for i, s := range selection {
-		var isLast bool
 		if (i + 1) == len(selection) {
 			isLast = true
-		} else {
-			isLast = false
 		}
+
 		selectFields += fmt.Sprintf("%v", s)
 		if !isLast {
 			selectFields += ", "
