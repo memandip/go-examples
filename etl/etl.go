@@ -4,9 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"mandip/go-examples/config"
-	"mandip/go-examples/mysql"
 	"strings"
+
+	"github.com/memandip/go-examples/config"
+	"github.com/memandip/go-examples/mysql"
 )
 
 type KV struct {
